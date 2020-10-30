@@ -22,8 +22,7 @@ function App() {
       <header className='App-header'>
         <SignOut />
       </header>
-      {console.log(user)}
-      <section>{user ? 'found' : <SignIn />}</section>
+      <section>{user ? <ChatRoom /> : <SignIn />}</section>
     </div>
   );
 }
@@ -53,6 +52,29 @@ function SignOut() {
         Sign Out
       </button>
     )
+  );
+}
+
+function ChatRoom() {
+  const messagesRef = firestore.collection('messages');
+  const query = messagesRef.orderBy('createdAt').limit(25);
+
+  const [messages] = useCollectionData(query, { idField: 'id' });
+  console.log(messages);
+  return (
+    <>
+      <main>{messages}</main>
+    </>
+  );
+}
+
+function ChatMessage(props: any) {
+  const { text, uid, photoURL } = props.message;
+
+  return (
+    <>
+      <p>{text}</p>
+    </>
   );
 }
 
