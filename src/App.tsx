@@ -63,7 +63,8 @@ function ChatRoom() {
   console.log(messages);
   return (
     <>
-      <main>hello</main>
+      {messages &&
+        messages.map(msg => <ChatMessage key={msg.id} message={msg} />)}
     </>
   );
 }
