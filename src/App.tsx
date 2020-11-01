@@ -14,6 +14,12 @@ const firebaseApp = firebase.initializeApp(firebaseConfig);
 const auth = firebaseApp.auth();
 const firestore = firebaseApp.firestore();
 
+interface Message {
+  id: string;
+  text: string;
+  createdAt: { nanoseconds: number; seconds: number };
+}
+
 function App() {
   const [user] = useAuthState(auth);
 
