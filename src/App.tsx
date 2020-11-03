@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
@@ -66,21 +66,57 @@ function ChatRoom() {
   const query = messagesRef.orderBy('createdAt').limit(25);
 
   const [messages] = useCollectionData(query, { idField: 'id' });
+  const [formValue, setFormValue] = useState('');
+  const sendMessage = async (e: any) => {
+    e.preventDefault();
+
+    // const { uid, photoURL } = auth.currentUser;
+
+    // await messagesRef.add({
+    //   text: formValue,
+    //   createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    //   uid,
+    //   photoURL,
+    // });
+
+    setFormValue('');
+  };
   console.log(messages);
+  console.log(auth.currentUser);
   return (
     <>
-      {messages &&
-        messages.map(msg => <ChatMessage key={msg.id} message={msg} />)}
+      <div>
+        {messages && messages.map(msg => <ChatMessage message={msg} />)}
+      </div>
+      <form onSubmit={sendMessage}>
+        <input
+          value={formValue}
+          onChange={e => setFormValue(e.target.value)}
+          placeholder='say something nice'
+        />
+
+        <button type='submit' disabled={!formValue}>
+          🕊️
+        </button>
+      </form>
     </>
   );
 }
 
 function ChatMessage(props: any) {
   const { text, uid, photoURL } = props.message;
+  const messageClass = uid === auth?.currentUser?.uid ? 'sent' : 'received';
 
   return (
     <>
-      <p>{text}</p>
+      <div className={`message ${messageClass}`}>
+        <img
+          src={
+            photoURL || 'https://api.adorable.io/avatars/23/abott@adorable.png'
+          }
+        />
+        <p>{text}</p>
+      </div>
     </>
   );
 }
