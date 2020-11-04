@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 import firebase from 'firebase/app';
@@ -18,6 +17,11 @@ interface Message {
   id: string;
   text: string;
   createdAt: { nanoseconds: number; seconds: number };
+}
+
+interface User {
+  uid: number;
+  photoURL: string;
 }
 
 function App() {
@@ -70,14 +74,14 @@ function ChatRoom() {
   const sendMessage = async (e: any) => {
     e.preventDefault();
 
-    // const { uid, photoURL } = auth.currentUser;
+    const { uid, photoURL } = auth.currentUser as any;
 
-    // await messagesRef.add({
-    //   text: formValue,
-    //   createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-    //   uid,
-    //   photoURL,
-    // });
+    await messagesRef.add({
+      text: formValue,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      uid,
+      photoURL,
+    });
 
     setFormValue('');
   };
@@ -86,7 +90,10 @@ function ChatRoom() {
   return (
     <>
       <div>
-        {messages && messages.map(msg => <ChatMessage message={msg} />)}
+        {messages &&
+          messages.map(msg => (
+            <ChatMessage key={(msg as Message).id} message={msg} />
+          ))}
       </div>
       <form onSubmit={sendMessage}>
         <input
@@ -114,6 +121,7 @@ function ChatMessage(props: any) {
           src={
             photoURL || 'https://api.adorable.io/avatars/23/abott@adorable.png'
           }
+          alt='Profile'
         />
         <p>{text}</p>
       </div>
