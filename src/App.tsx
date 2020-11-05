@@ -19,11 +19,6 @@ interface Message {
   createdAt: { nanoseconds: number; seconds: number };
 }
 
-interface User {
-  uid: number;
-  photoURL: string;
-}
-
 function App() {
   const [user] = useAuthState(auth);
 
@@ -74,16 +69,22 @@ function ChatRoom() {
   const sendMessage = async (e: any) => {
     e.preventDefault();
 
-    const { uid, photoURL } = auth.currentUser as any;
+    const user = auth.currentUser;
 
-    await messagesRef.add({
-      text: formValue,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      uid,
-      photoURL,
-    });
+    if (user) {
+      const { uid, photoURL } = user;
 
-    setFormValue('');
+      await messagesRef.add({
+        text: formValue,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        uid,
+        photoURL,
+      });
+
+      setFormValue('');
+    } else {
+      console.log('Error Occured');
+    }
   };
   console.log(messages);
   console.log(auth.currentUser);
