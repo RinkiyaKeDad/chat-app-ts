@@ -9,6 +9,8 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { firebaseConfig } from './config';
 
+import SignIn from './components/SignIn';
+
 const firebaseApp = firebase.initializeApp(firebaseConfig);
 const auth = firebaseApp.auth();
 const firestore = firebaseApp.firestore();
@@ -27,25 +29,27 @@ function App() {
       <header className='App-header'>
         <SignOut />
       </header>
-      <section>{user ? <ChatRoom /> : <SignIn />}</section>
+      <section>
+        {user ? <ChatRoom /> : <SignIn firebase={firebase} auth={auth} />}
+      </section>
     </div>
   );
 }
 
-function SignIn() {
-  const signInWithGoogle = () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider);
-  };
+// function SignIn() {
+//   const signInWithGoogle = () => {
+//     const provider = new firebase.auth.GoogleAuthProvider();
+//     auth.signInWithPopup(provider);
+//   };
 
-  return (
-    <>
-      <button className='sign-in' onClick={signInWithGoogle}>
-        Sign in with Google
-      </button>
-    </>
-  );
-}
+//   return (
+//     <>
+//       <button className='sign-in' onClick={signInWithGoogle}>
+//         Sign in with Google
+//       </button>
+//     </>
+//   );
+// }
 
 function SignOut() {
   return (
