@@ -10,6 +10,7 @@ import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { firebaseConfig } from './config';
 
 import SignIn from './components/SignIn';
+import SignOut from './components/SignOut';
 
 const firebaseApp = firebase.initializeApp(firebaseConfig);
 const auth = firebaseApp.auth();
@@ -27,7 +28,7 @@ function App() {
   return (
     <div className='App'>
       <header className='App-header'>
-        <SignOut />
+        <SignOut auth={auth} />
       </header>
       <section>
         {user ? <ChatRoom /> : <SignIn firebase={firebase} auth={auth} />}
@@ -51,15 +52,15 @@ function App() {
 //   );
 // }
 
-function SignOut() {
-  return (
-    auth.currentUser && (
-      <button className='sign-out' onClick={() => auth.signOut()}>
-        Sign Out
-      </button>
-    )
-  );
-}
+// function SignOut() {
+//   return (
+//     auth.currentUser && (
+//       <button className='sign-out' onClick={() => auth.signOut()}>
+//         Sign Out
+//       </button>
+//     )
+//   );
+// }
 
 function ChatRoom() {
   const dummy = useRef<null | HTMLDivElement>(null);
