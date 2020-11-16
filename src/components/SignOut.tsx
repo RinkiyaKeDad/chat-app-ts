@@ -1,4 +1,5 @@
 import React from 'react';
+import { FirebaseContextConsumer } from '../context/firebase-context';
 type PropDetails = {
   auth: any;
 };
