@@ -11,16 +11,18 @@ import { firebaseConfig } from './config';
 
 import SignIn from './components/SignIn';
 import SignOut from './components/SignOut';
+import ChatMessage from './components/ChatMessage';
+import ChatRoom from './components/ChatRoom';
 
 const firebaseApp = firebase.initializeApp(firebaseConfig);
 const auth = firebaseApp.auth();
 const firestore = firebaseApp.firestore();
 
-interface Message {
-  id: string;
-  text: string;
-  createdAt: { nanoseconds: number; seconds: number };
-}
+// interface Message {
+//   id: string;
+//   text: string;
+//   createdAt: { nanoseconds: number; seconds: number };
+// }
 
 function App() {
   const [user] = useAuthState(auth);
@@ -31,7 +33,11 @@ function App() {
         <SignOut auth={auth} />
       </header>
       <section>
-        {user ? <ChatRoom /> : <SignIn firebase={firebase} auth={auth} />}
+        {user ? (
+          <ChatRoom firebase={firebase} firestore={firestore} auth={auth} />
+        ) : (
+          <SignIn firebase={firebase} auth={auth} />
+        )}
       </section>
     </div>
   );
@@ -62,79 +68,83 @@ function App() {
 //   );
 // }
 
-function ChatRoom() {
-  const dummy = useRef<null | HTMLDivElement>(null);
-  const messagesRef = firestore.collection('messages');
-  const query = messagesRef.orderBy('createdAt').limit(25);
+// function ChatRoom() {
+//   const dummy = useRef<null | HTMLDivElement>(null);
+//   const messagesRef = firestore.collection('messages');
+//   const query = messagesRef.orderBy('createdAt').limit(25);
 
-  const [messages] = useCollectionData(query, { idField: 'id' });
-  const [formValue, setFormValue] = useState('');
-  const sendMessage = async (e: any) => {
-    e.preventDefault();
+//   const [messages] = useCollectionData(query, { idField: 'id' });
+//   const [formValue, setFormValue] = useState('');
+//   const sendMessage = async (e: any) => {
+//     e.preventDefault();
 
-    const user = auth.currentUser;
+//     const user = auth.currentUser;
 
-    if (user) {
-      const { uid, photoURL } = user;
+//     if (user) {
+//       const { uid, photoURL } = user;
 
-      await messagesRef.add({
-        text: formValue,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        uid,
-        photoURL,
-      });
+//       await messagesRef.add({
+//         text: formValue,
+//         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+//         uid,
+//         photoURL,
+//       });
 
-      setFormValue('');
-      dummy!.current!.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      console.log('Error Occured');
-    }
-  };
-  console.log(messages);
-  console.log(auth.currentUser);
-  return (
-    <>
-      <main>
-        <div>
-          {messages &&
-            messages.map(msg => (
-              <ChatMessage key={(msg as Message).id} message={msg} />
-            ))}
-        </div>
-        <div ref={dummy}></div>
-      </main>
-      <form onSubmit={sendMessage}>
-        <input
-          value={formValue}
-          onChange={e => setFormValue(e.target.value)}
-          placeholder='say something nice'
-        />
+//       setFormValue('');
+//       dummy!.current!.scrollIntoView({ behavior: 'smooth' });
+//     } else {
+//       console.log('Error Occured');
+//     }
+//   };
+//   console.log(messages);
+//   console.log(auth.currentUser);
+//   return (
+//     <>
+//       <main>
+//         <div>
+//           {messages &&
+//             messages.map(msg => (
+//               <ChatMessage
+//                 key={(msg as Message).id}
+//                 message={msg}
+//                 auth={auth}
+//               />
+//             ))}
+//         </div>
+//         <div ref={dummy}></div>
+//       </main>
+//       <form onSubmit={sendMessage}>
+//         <input
+//           value={formValue}
+//           onChange={e => setFormValue(e.target.value)}
+//           placeholder='say something nice'
+//         />
 
-        <button type='submit' disabled={!formValue}>
-          Send
-        </button>
-      </form>
-    </>
-  );
-}
+//         <button type='submit' disabled={!formValue}>
+//           Send
+//         </button>
+//       </form>
+//     </>
+//   );
+// }
 
-function ChatMessage(props: any) {
-  const { text, uid, photoURL } = props.message;
-  const messageClass = uid === auth?.currentUser?.uid ? 'sent' : 'received';
+// function ChatMessage(props: any) {
+//   const { text, uid, photoURL } = props.message;
+//   const messageClass = uid === auth?.currentUser?.uid ? 'sent' : 'received';
 
-  return (
-    <>
-      <div className={`message ${messageClass}`}>
-        <img
-          src={
-            photoURL || 'https://api.adorable.io/avatars/23/abott@adorable.png'
-          }
-          alt='Profile'
-        />
-        <p>{text}</p>
-      </div>
-    </>
-  );
-}
+//   return (
+//     <>
+//       <div className={`message ${messageClass}`}>
+//         <img
+//           src={
+//             photoURL || 'https://api.adorable.io/avatars/23/abott@adorable.png'
+//           }
+//           alt='Profile'
+//         />
+//         <p>{text}</p>
+//       </div>
+//     </>
+//   );
+// }
 
 export default App;
