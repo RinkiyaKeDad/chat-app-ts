@@ -6,6 +6,7 @@ export interface FirebaseContextInterface {
   firestore: any;
   auth: any;
 }
+
 export const FirebaseContext = createContext<FirebaseContextInterface | null>(
   null
 );
